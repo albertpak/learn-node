@@ -7,14 +7,14 @@ exports.homePage = (req, res) => {
 
 exports.addStore = (req, res) => {
     res.render('editStore', {
-        title: 'Add Store'
+        title: 'Add Store',
     });
 };
 
 exports.createStore = async(req, res) => {
-    const store = await (new Store(req.body)).save();
+    const store = await new Store(req.body).save();
 
-    req.flash('success', `Successfully created ${store.name}.`)
+    req.flash('success', `Successfully created ${store.name}.`);
 
     res.redirect(`/store/${store.slug}`);
 };
@@ -32,17 +32,18 @@ exports.editStore = async(req, res) => {
 
     res.render('editStore', {
         title: 'Edit Store',
-        store
+        store,
     });
 };
 
 exports.updateStore = async(req, res) => {
-    const store = await Store.findOneAndUpdate({ _id: req.params.id },
-        req.body, {
-            new: true, // return new store instead of the old one
-            runValidators: true
-        }
-    ).exec();
+    // set as type 'Point' before save happens
+    req.body.location.type = 'Point';
+
+    const store = await Store.findOneAndUpdate({ _id: req.params.id }, req.body, {
+        new: true, // return new store instead of the old one
+        runValidators: true,
+    }).exec();
 
     req.flash('success', `Successfully updated!`);
     res.redirect(`/stores/${store.id}/edit`);
