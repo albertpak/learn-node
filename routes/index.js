@@ -8,7 +8,12 @@ const { catchErrors } = require('../handlers/errorHandlers');
 router.get('/', storeController.getStores);
 router.get('/stores', storeController.getStores);
 router.get('/add', storeController.addStore);
-router.post('/add', catchErrors(storeController.createStore));
+router.post(
+    '/add',
+    storeController.upload,
+    catchErrors(storeController.resize),
+    catchErrors(storeController.createStore)
+);
 router.post('/add/:id', catchErrors(storeController.updateStore));
 router.get('/stores/:id/edit', catchErrors(storeController.editStore));
 
