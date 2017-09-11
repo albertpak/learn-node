@@ -15,7 +15,7 @@ const multerOptions = {
     } else {
       next({ message: 'That file type is not allowed!' }, false);
     }
-  }
+  },
 };
 
 exports.homePage = (req, res) => {
@@ -24,7 +24,7 @@ exports.homePage = (req, res) => {
 
 exports.addStore = (req, res) => {
   res.render('editStore', {
-    title: 'Add Store'
+    title: 'Add Store',
   });
 };
 
@@ -59,7 +59,7 @@ exports.getStores = async (req, res) => {
   const stores = await Store.find();
   res.render('stores', {
     title: 'Stores',
-    stores
+    stores,
   });
 };
 
@@ -68,7 +68,7 @@ exports.editStore = async (req, res) => {
 
   res.render('editStore', {
     title: 'Edit Store',
-    store
+    store,
   });
 };
 
@@ -80,9 +80,17 @@ exports.updateStore = async (req, res) => {
 
   const store = await Store.findOneAndUpdate({ _id: req.params.id }, req.body, {
     new: true, // return new store instead of the old one
-    runValidators: true
+    runValidators: true,
   }).exec();
 
   req.flash('success', `Successfully updated!`);
   res.redirect(`/stores/${store.id}/edit`);
+};
+
+exports.getStoreBySlug = async (req, res, next) => {
+  const store = await Store.findOne({ slug: req.params.slug });
+
+  if (!store) return next();
+
+  res.render('store', { store, title: store.name });
 };
